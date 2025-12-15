@@ -1,0 +1,14 @@
+{
+  "name": "fsdl",
+  "private": true,
+  "scripts": {
+    "build": "bun build --minify --splitting --outdir=./dist main.ts",
+    "dev": "bun build --watch --outdir=./dist main.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
