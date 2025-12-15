@@ -13,7 +13,6 @@ function entryPoint() {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background: #f8f9fa;
         }
-        a:hover { opacity: 0.8; }
     `);
 
 

@@ -15,6 +15,7 @@ type AttributeKeys<T> = {
 }[keyof T];
 
 type EventKeys = 'onclick' | 'onmouseenter' | 'onmouseleave' | 'onmouseover' | 'onmouseout' | 'onfocus' | 'onblur' | 'onchange' | 'oninput' | 'onsubmit' | 'ondblclick' | 'onkeydown' | 'onkeyup' | 'onkeypress';
+type HoverAttr = Partial<CSSStyleDeclaration>;
 
 type TypAttributeKey<TTag extends keyof HTMLElementTagNameMap> = AttributeKeys<HTMLElementTagNameMap[TTag]> |
         EventKeys |
@@ -25,6 +26,7 @@ type tag_attributes<TTag extends keyof HTMLElementTagNameMap> = Partial<
     Record<TypAttributeKey<TTag>, PrimitiveAttr>
 > & {
     style?: Partial<CSSStyleDeclaration>;
+    hover?: HoverAttr;
 };
 
 function text<T>(signal: Signal<T>): Text {
@@ -44,10 +46,26 @@ function createElement<TTag extends keyof HTMLElementTagNameMap>(
 ): ElementType<TTag> {
     const element = document.createElement(tag) as ElementType<TTag>;
 
-    const { style, ...parsedAttrs } = attrs;
+    const { style, hover, ...parsedAttrs } = attrs;
     
     if (style) {
         Object.assign(element.style, style);
+    }
+
+    if (hover) {
+        const initialState: Partial<CSSStyleDeclaration> = {};
+
+        for (const key in hover) {
+            initialState[key as any] = element.style[key as any];
+        }
+
+        element.addEventListener('mouseenter', () => {
+            Object.assign(element.style, hover);
+        });
+
+        element.addEventListener('mouseleave', () => {
+            Object.assign(element.style, initialState);
+        });
     }
 
     const eventMap: Record<string, string> = {
