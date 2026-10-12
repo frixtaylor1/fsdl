@@ -17,7 +17,7 @@ export interface WebComponentConfig<P extends ComponentProps = ComponentProps> {
     props?: P;
     shadow?: boolean | ShadowRootMode;
     styles?: string;
-    setup: (ctx: WebComponentContext<P>) => HTMLElement | HTMLElement[] | void;
+    setup: (ctx: WebComponentContext<P>) => HTMLElement | HTMLElement[] | void | Promise<HTMLElement | HTMLElement[] | void>;
 }
 
 function camelToKebab(str: string): string {
@@ -68,7 +68,7 @@ export function defineWebComponent<P extends ComponentProps = ComponentProps>(
             }
         }
 
-        connectedCallback() {
+        async connectedCallback() {
             const root = this._shadow || this;
 
             // Inject styles if provided
@@ -100,7 +100,7 @@ export function defineWebComponent<P extends ComponentProps = ComponentProps>(
                 emit
             };
 
-            const content = config.setup(context);
+            const content = await Promise.resolve(config.setup(context));
             if (content) {
                 if (Array.isArray(content)) {
                     content.forEach(child => root.appendChild(child));

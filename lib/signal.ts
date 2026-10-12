@@ -37,7 +37,6 @@ export default class Signal<T> {
     }
 
     notify(): void {
-        // Clone subscribers to avoid issues if subscribers mutate the set during notification
         const subList = Array.from(this.subs);
         subList.forEach(fn => fn());
     }
@@ -84,7 +83,7 @@ export function effect(fn: () => void | (() => void)): () => void {
  */
 export function computed<T>(fn: () => T): Signal<T> {
     const compSignal = signal<T>(undefined as unknown as T);
-    
+
     effect(() => {
         compSignal.value = fn();
     });
